@@ -6,7 +6,7 @@ An incremental implementation of the MurmurHash3 (32-bit) hashing algorithm for 
 Installation
 ------------
 
-To use iMurmurHash in the browser, [download the latest version](https://github.com/jensyt/imurmurhash-js/blob/master/imurmurhash.min.js) and include it as a script on your site.
+To use iMurmurHash in the browser, [download the latest version](https://raw.github.com/jensyt/imurmurhash-js/master/imurmurhash.min.js) and include it as a script on your site.
 
 ```html
 <script type="text/javascript" src="/scripts/imurmurhash.min.js"></script>
