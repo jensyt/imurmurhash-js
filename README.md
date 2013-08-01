@@ -1,7 +1,9 @@
 iMurmurHash.JS
 ==============
 
-An incremental implementation of the MurmurHash3 (32-bit) hashing algorithm for JavaScript based on [Gary Court's implementation](https://github.com/garycourt/murmurhash-js).
+An incremental implementation of the MurmurHash3 (32-bit) hashing algorithm for JavaScript based on [Gary Court's implementation](https://github.com/garycourt/murmurhash-js) with [kazuyukitanimura's modifications](https://github.com/kazuyukitanimura/murmurhash-js).
+
+This version works significantly faster than the non-incremental version if you need to hash many small strings into a single hash, since string concatenation (to build the single string to pass the non-incremental version) is fairly costly. In one case tested, using the incremental version was about 50% faster than concatenating 5-10 strings and then hashing.
 
 Installation
 ------------
@@ -71,7 +73,7 @@ Both methods can be mixed however you like if you have different use cases.
 ---
 
 ### MurmurHash3.prototype.hash (string)
-Incrementally add a _string_ to the hash. This can be called as many times as you want for the hash state object, including after a calls to `result()`. Returns `this` so calls can be chained.
+Incrementally add a _string_ to the hash. This can be called as many times as you want for the hash state object, including after a call to `result()`. Returns `this` so calls can be chained.
 
 ---
 
@@ -94,7 +96,7 @@ m.hash(' test string').result();
 ---
 
 ### MurmurHash3.prototype.reset (seed)
-Reset the state object for reuse, optionally using the given _seed_ (defaults to 0 like constructor). Returns `this` so calls can be chained.
+Reset the state object for reuse, optionally using the given _seed_ (defaults to 0 like the constructor). Returns `this` so calls can be chained.
 
 ---
 

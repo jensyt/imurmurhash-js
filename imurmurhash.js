@@ -41,7 +41,7 @@
     // @param {string} key A UTF-16 or ASCII string
     // @return {object} this
     MurmurHash3.prototype.hash = function(key) {
-        var remainder, bytes, h1, h1b, c1, c2, k1, i, top, len, l;
+        var remainder, bytes, h1, k1, i, top, len, l;
 
         len = key.length;
         this.length += len;
@@ -67,18 +67,14 @@
         }
 
         h1 = this.h1;
-        c1 = 0xcc9e2d51;
-        c2 = 0x1b873593;
-
         do {
-            k1 = ((((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16))) & 0xffffffff;
+            k1 = (k1 * 0x2d51 + (k1 & 0xffff) * 0xcc9e0000) & 0xffffffff;
             k1 = (k1 << 15) | (k1 >>> 17);
-            k1 = ((((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16))) & 0xffffffff;
+            k1 = (k1 * 0x3593 + (k1 & 0xffff) * 0x1b870000) & 0xffffffff;
 
             h1 ^= k1;
             h1 = (h1 << 13) | (h1 >>> 19);
-            h1b = ((((h1 & 0xffff) * 5) + ((((h1 >>> 16) * 5) & 0xffff) << 16))) & 0xffffffff;
-            h1 = (((h1b & 0xffff) + 0x6b64) + ((((h1b >>> 16) + 0xe654) & 0xffff) << 16));
+            h1 = (h1 * 5 + 0xe6546b64) & 0xffffffff;
 
             if (i >= bytes) {
                 break
@@ -86,12 +82,12 @@
 
             top = key.charCodeAt(i + 3)
             k1 =
-              ((key.charCodeAt(i) & 0xffff)) ^
-              ((key.charCodeAt(++i) & 0xffff) << 8) ^
-              ((key.charCodeAt(++i) & 0xffff) << 16) ^
+              ((key.charCodeAt(i++) & 0xffff)) ^
+              ((key.charCodeAt(i++) & 0xffff) << 8) ^
+              ((key.charCodeAt(i++) & 0xffff) << 16) ^
               ((top & 0xff) << 24) ^
               ((top & 0xff00) >> 8);
-            i += 2;
+            i++;
         } while (true)
 
         k1 = 0;
@@ -111,26 +107,24 @@
     //
     // @return {number} The 32-bit hash
     MurmurHash3.prototype.result = function() {
-        var k1, h1, c1, c2;
+        var k1, h1;
         
         k1 = this.k1;
         h1 = this.h1;
 
         if (k1 > 0) {
-            c1 = 0xcc9e2d51;
-            c2 = 0x1b873593;
-            k1 = (((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16)) & 0xffffffff;
+            k1 = (k1 * 0x2d51 + (k1 & 0xffff) * 0xcc9e0000) & 0xffffffff;
             k1 = (k1 << 15) | (k1 >>> 17);
-            k1 = (((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16)) & 0xffffffff;
+            k1 = (k1 * 0x3593 + (k1 & 0xffff) * 0x1b870000) & 0xffffffff;
             h1 ^= k1;
         }
 
         h1 ^= this.length;
 
         h1 ^= h1 >>> 16;
-        h1 = (((h1 & 0xffff) * 0x85ebca6b) + ((((h1 >>> 16) * 0x85ebca6b) & 0xffff) << 16)) & 0xffffffff;
+        h1 = (h1 * 0xca6b + (h1 & 0xffff) * 0x85eb0000) & 0xffffffff;
         h1 ^= h1 >>> 13;
-        h1 = ((((h1 & 0xffff) * 0xc2b2ae35) + ((((h1 >>> 16) * 0xc2b2ae35) & 0xffff) << 16))) & 0xffffffff;
+        h1 = (h1 * 0xae35 + (h1 & 0xffff) * 0xc2b20000) & 0xffffffff;
         h1 ^= h1 >>> 16;
 
         return h1 >>> 0;
