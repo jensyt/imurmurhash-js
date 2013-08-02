@@ -41,65 +41,58 @@
     // @param {string} key A UTF-16 or ASCII string
     // @return {object} this
     MurmurHash3.prototype.hash = function(key) {
-        var remainder, bytes, h1, k1, i, top, len, l;
+        var h1, k1, i, top, len;
 
         len = key.length;
-        this.length += len;
+        this.len += len;
 
         k1 = this.k1;
         i = 0;
-        l = 0;
-        switch (this.remainder) {
-            case 0: k1 ^= len > l++ ? (key.charCodeAt(i++) & 0xffff) : 0;
-            case 1: k1 ^= len > l++ ? (key.charCodeAt(i++) & 0xffff) << 8 : 0;
-            case 2: k1 ^= len > l++ ? (key.charCodeAt(i++) & 0xffff) << 16 : 0;
+        switch (this.rem) {
+            case 0: k1 ^= len > i ? (key.charCodeAt(i++) & 0xffff) : 0;
+            case 1: k1 ^= len > i ? (key.charCodeAt(i++) & 0xffff) << 8 : 0;
+            case 2: k1 ^= len > i ? (key.charCodeAt(i++) & 0xffff) << 16 : 0;
             case 3:
-                k1 ^= len > l ? (key.charCodeAt(i) & 0xff) << 24 : 0;
-                k1 ^= len > l ? (key.charCodeAt(i++) & 0xff00) >> 8 : 0;
+                k1 ^= len > i ? (key.charCodeAt(i) & 0xff) << 24 : 0;
+                k1 ^= len > i ? (key.charCodeAt(i++) & 0xff00) >> 8 : 0;
         }
 
-        remainder = (len + this.remainder) & 3; // & 3 is same as % 4
-        bytes = len - remainder;
-        this.remainder = remainder;
-        if (bytes <= 0) {
-            this.k1 = k1;
-            return this;
-        }
+        this.rem = (len + this.rem) & 3; // & 3 is same as % 4
+        len -= this.rem;
+        if (len > 0) {
+            h1 = this.h1;
+            do {
+                k1 = (k1 * 0x2d51 + (k1 & 0xffff) * 0xcc9e0000) & 0xffffffff;
+                k1 = (k1 << 15) | (k1 >>> 17);
+                k1 = (k1 * 0x3593 + (k1 & 0xffff) * 0x1b870000) & 0xffffffff;
 
-        h1 = this.h1;
-        do {
-            k1 = (k1 * 0x2d51 + (k1 & 0xffff) * 0xcc9e0000) & 0xffffffff;
-            k1 = (k1 << 15) | (k1 >>> 17);
-            k1 = (k1 * 0x3593 + (k1 & 0xffff) * 0x1b870000) & 0xffffffff;
+                h1 ^= k1;
+                h1 = (h1 << 13) | (h1 >>> 19);
+                h1 = (h1 * 5 + 0xe6546b64) & 0xffffffff;
 
-            h1 ^= k1;
-            h1 = (h1 << 13) | (h1 >>> 19);
-            h1 = (h1 * 5 + 0xe6546b64) & 0xffffffff;
+                if (i >= len) {
+                    break
+                }
 
-            if (i >= bytes) {
-                break
+                k1 = ((key.charCodeAt(i++) & 0xffff)) ^
+                     ((key.charCodeAt(i++) & 0xffff) << 8) ^
+                     ((key.charCodeAt(i++) & 0xffff) << 16);
+                top = key.charCodeAt(i++);
+                k1 ^= ((top & 0xff) << 24) ^
+                      ((top & 0xff00) >> 8);
+            } while (true)
+
+            k1 = 0;
+            switch (this.rem) {
+                case 3: k1 ^= (key.charCodeAt(i + 2) & 0xffff) << 16;
+                case 2: k1 ^= (key.charCodeAt(i + 1) & 0xffff) << 8;
+                case 1: k1 ^= (key.charCodeAt(i) & 0xffff);
             }
 
-            top = key.charCodeAt(i + 3)
-            k1 =
-              ((key.charCodeAt(i++) & 0xffff)) ^
-              ((key.charCodeAt(i++) & 0xffff) << 8) ^
-              ((key.charCodeAt(i++) & 0xffff) << 16) ^
-              ((top & 0xff) << 24) ^
-              ((top & 0xff00) >> 8);
-            i++;
-        } while (true)
-
-        k1 = 0;
-        switch (remainder) {
-            case 3: k1 ^= (key.charCodeAt(i + 2) & 0xff) << 16;
-            case 2: k1 ^= (key.charCodeAt(i + 1) & 0xff) << 8;
-            case 1: k1 ^= (key.charCodeAt(i) & 0xff);
+            this.h1 = h1;
         }
 
-        this.h1 = h1;
         this.k1 = k1;
-
         return this;
     };
 
@@ -119,7 +112,7 @@
             h1 ^= k1;
         }
 
-        h1 ^= this.length;
+        h1 ^= this.len;
 
         h1 ^= h1 >>> 16;
         h1 = (h1 * 0xca6b + (h1 & 0xffff) * 0x85eb0000) & 0xffffffff;
@@ -135,7 +128,7 @@
     // @param {number} seed An optional positive integer
     MurmurHash3.prototype.reset = function(seed) {
         this.h1 = typeof seed === 'number' ? seed : 0;
-        this.remainder = this.k1 = this.length = 0;
+        this.rem = this.k1 = this.len = 0;
         return this;
     };
 

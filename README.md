@@ -47,7 +47,7 @@ hashState.hash('and').hash('some').hash('more');
 
 // Get a result
 hashState.result();
-// returns 0x29d3f1e3
+// returns 0xe4ccfe6b
 ```
 
 Functions
