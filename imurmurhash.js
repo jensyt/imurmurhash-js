@@ -19,20 +19,14 @@
     // @param {number} seed An optional positive integer
     // @return {object} A MurmurHash3 object for incremental hashing
     function MurmurHash3(key, seed) {
-        var m;
-        if (this instanceof MurmurHash3) {
-            m = this;
-        } else {
-            m = cache;
-        }
-
+        var m = this instanceof MurmurHash3 ? this : cache;
         m.reset(seed)
         if (typeof key === 'string' && key.length > 0) {
             m.hash(key);
         }
 
         if (m !== this) {
-            return m
+            return m;
         }
     };
 
@@ -61,7 +55,7 @@
         len -= this.rem;
         if (len > 0) {
             h1 = this.h1;
-            do {
+            while (1) {
                 k1 = (k1 * 0x2d51 + (k1 & 0xffff) * 0xcc9e0000) & 0xffffffff;
                 k1 = (k1 << 15) | (k1 >>> 17);
                 k1 = (k1 * 0x3593 + (k1 & 0xffff) * 0x1b870000) & 0xffffffff;
@@ -71,7 +65,7 @@
                 h1 = (h1 * 5 + 0xe6546b64) & 0xffffffff;
 
                 if (i >= len) {
-                    break
+                    break;
                 }
 
                 k1 = ((key.charCodeAt(i++) & 0xffff)) ^
@@ -80,7 +74,7 @@
                 top = key.charCodeAt(i++);
                 k1 ^= ((top & 0xff) << 24) ^
                       ((top & 0xff00) >> 8);
-            } while (true)
+            }
 
             k1 = 0;
             switch (this.rem) {
