@@ -63,7 +63,7 @@
         this.remainder = remainder;
         if (bytes <= 0) {
             this.k1 = k1;
-            return;
+            return this;
         }
 
         h1 = this.h1;
