@@ -73,7 +73,7 @@ Both methods can be mixed however you like if you have different use cases.
 ---
 
 ### MurmurHash3.prototype.hash (string)
-Incrementally add a _string_ to the hash. This can be called as many times as you want for the hash state object, including after a call to `result()`. Returns `this` so calls can be chained.
+Incrementally add _string_ to the hash. This can be called as many times as you want for the hash state object, including after a call to `result()`. Returns `this` so calls can be chained.
 
 ---
 
@@ -95,7 +95,7 @@ m.hash(' test string').result();
 
 ---
 
-### MurmurHash3.prototype.reset (seed)
+### MurmurHash3.prototype.reset ([seed])
 Reset the state object for reuse, optionally using the given _seed_ (defaults to 0 like the constructor). Returns `this` so calls can be chained.
 
 ---
