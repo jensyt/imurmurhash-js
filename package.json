@@ -1,6 +1,6 @@
 {
   "name": "imurmurhash",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "An incremental implementation of MurmurHash3",
   "homepage": "https://github.com/jensyt/imurmurhash-js",
   "main": "imurmurhash.js",

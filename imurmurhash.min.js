@@ -1,6 +1,6 @@
 /**
  * @preserve
- * JS Implementation of incremental MurmurHash3 (r136) (as of May 20, 2011)
+ * JS Implementation of incremental MurmurHash3 (r150) (as of May 10, 2013)
  *
  * @author <a href="mailto:jensyt@gmail.com">Jens Taylor</a>
  * @see http://github.com/homebrewing/brauhaus-diff

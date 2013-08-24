@@ -1,4 +1,4 @@
-iMurmurHash.JS
+iMurmurHash.js
 ==============
 
 An incremental implementation of the MurmurHash3 (32-bit) hashing algorithm for JavaScript based on [Gary Court's implementation](https://github.com/garycourt/murmurhash-js) with [kazuyukitanimura's modifications](https://github.com/kazuyukitanimura/murmurhash-js).
